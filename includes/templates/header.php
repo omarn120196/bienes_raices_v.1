@@ -30,5 +30,12 @@
                     </div>    
                 </div>
             </nav>
+
+            <?php 
+                if($inicio){
+                    echo "<h1>Ventas de Casa y Departamentos Exclusivos de Lujo</h1>";
+                }
+            ?>
+
         </div>
     </header>
