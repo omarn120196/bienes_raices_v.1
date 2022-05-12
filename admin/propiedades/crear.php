@@ -1,5 +1,14 @@
 <?php
 
+    //Importar funciones
+    require '../../includes/funciones.php';
+
+    $auth = estaAutenticado();
+
+    if(!$auth){
+        header('Location: /');
+    }
+
     //Importar la Base de datos
     require '../../includes/config/database.php';
     $db = conectarDB();
@@ -7,9 +16,6 @@
     //Consultar para obtener vendedores
     $consulta = "SELECT * FROM vendedores";
     $respuesta = mysqli_query($db, $consulta);
-
-    //Importar funciones
-    require '../../includes/funciones.php';
 
     //Arreglo con mensaje de errores
     $errores = [];

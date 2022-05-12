@@ -1,5 +1,14 @@
 <?php
 
+    //Importar funciones
+    require '../../includes/funciones.php';
+
+    $auth = estaAutenticado();
+
+    if(!$auth){
+        header('Location: /');
+    }
+
     $id = $_GET['id'];
     $id = filter_var($id, FILTER_VALIDATE_INT);
 
@@ -19,9 +28,6 @@
     //Consultar para obtener vendedores
     $consulta = "SELECT * FROM vendedores";
     $respuesta = mysqli_query($db, $consulta);
-
-    //Importar funciones
-    require '../../includes/funciones.php';
 
     //Arreglo con mensaje de errores
     $errores = [];
