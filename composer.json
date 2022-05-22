@@ -1,0 +1,19 @@
+{
+    "name": "omar/bienesraices",
+    "description": "Proyecto con POO en PHP",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\" : "./clases"
+        }
+    },
+    "authors": [
+        {
+            "name": "Omar Noyola",
+            "email": "omis1296@gmail.com"
+        }
+    ],
+    "require": {
+        "intervention/image": "^2.7"
+    }
+}

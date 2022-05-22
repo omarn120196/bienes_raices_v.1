@@ -1,16 +1,13 @@
 <?php
 
     //Importar funciones
-    require '../../includes/funciones.php';
+    require '../../includes/app.php';
 
-    $auth = estaAutenticado();
+    use App\Propiedad;
+    use Intervention\Image\ImageManagerStatic as Image;
 
-    if(!$auth){
-        header('Location: /');
-    }
+    estaAutenticado();
 
-    //Importar la Base de datos
-    require '../../includes/config/database.php';
     $db = conectarDB();
 
     //Consultar para obtener vendedores
@@ -18,7 +15,7 @@
     $respuesta = mysqli_query($db, $consulta);
 
     //Arreglo con mensaje de errores
-    $errores = [];
+    $errores = Propiedad::getErrores();
 
     $titulo = '';
     $precio = '';
@@ -31,69 +28,33 @@
     //Ejecutar el cpodigo despues de que el usuario envia el formulario
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-        $titulo = mysqli_real_escape_string($db, $_POST['titulo']);
-        $precio = mysqli_real_escape_string($db, $_POST['precio']);
-        $descripcion = mysqli_real_escape_string($db, $_POST['descripcion']);
-        $habitaciones = mysqli_real_escape_string($db, $_POST['habitaciones']);
-        $wc = mysqli_real_escape_string($db, $_POST['wc']);
-        $estacionamiento = mysqli_real_escape_string($db, $_POST['estacionamiento']);
-        $vendedorId = mysqli_real_escape_string($db, $_POST['vendedor']);
-        $creado = date('Y/m/d');
+        $propiedad = new Propiedad($_POST);
 
-        //Asignar fileshacia una variable
-        $imagen = $_FILES['imagen'];
+        //Generar un nombre unico
+        $nombreImagen = md5(uniqid(rand(), true)) . '.jpg';
 
-        if(!$titulo){
-            $errores[] = 'Debes añadir un título';
-        }
-        if(!$precio){
-            $errores[] = 'Debes añadir un precio';
-        }
-        if(strlen($descripcion) < 50){
-            $errores[] = 'Debes añadir una descripcion y debe contener al menos 50 caracteres';
-        }
-        if(!$habitaciones){
-            $errores[] = 'Debes añadir un numero de habitaciones';
-        }
-        if(!$wc){
-            $errores[] = 'Debes añadir un numero de baños';
-        }
-        if(!$estacionamiento){
-            $errores[] = 'Debes añadir el numero de estacionamientos';
-        }
-        if(!$vendedorId){
-            $errores[] = 'Elige un vendedor';
-        }
-        if(!$imagen['name'] || $imagen['error']){
-            $errores[] = 'Debes elegir una imagen';
+        if($_FILES['imagen']['tmp_name']){
+            //Realizar un resize a la imagen
+            $image = Image::make($_FILES['imagen']['tmp_name'])->fit(800, 600);
+            $propiedad->setImagen($nombreImagen);
         }
 
-        // Validar por tamaño (100kb)
-        $medida = 1000 * 1000;
-        if($imagen['size'] > $medida){
-            $errores[] = 'La imágen es muy pesada';
-        }
-
+        // Validar
+        $errores = $propiedad->validar();
+         
         //Revisar que el arreglo de errores este vacio
         if(empty($errores)){
 
             //Crear carpeta de imagen
-            $carpetaImagenes = '../../imagenes/';
-
-            if(!is_dir($carpetaImagenes)){
-                mkdir($carpetaImagenes);
+            if(!is_dir(CARPETA_IMAGENES)){
+                mkdir( CARPETA_IMAGENES);
             }
-
-            //Generar un nombre unico
-            $nombreImagen = md5(uniqid(rand(), true)) . '.jpg';
-
-            //Subir imagen
-            move_uploaded_file($imagen['tmp_name'], $carpetaImagenes . $nombreImagen);
-
-            //Insertar en la BD
-            $query = "INSERT INTO propiedades (titulo, precio, imagen, descripcion, habitaciones, wc, estacionamiento, creado, vendedorId) values('$titulo', '$precio', '$nombreImagen', '$descripcion', '$habitaciones', '$wc', '$estacionamiento', '$creado', '$vendedorId');";
-
-            $resultado = mysqli_query($db, $query);
+            
+            //Guarda la imagen en el servidor
+            $image->save(CARPETA_IMAGENES . $nombreImagen);
+            
+            // Guardar en la base de datos
+            $resultado = $propiedad->guardar();
 
             if($resultado){
                 
@@ -189,7 +150,7 @@
         <fieldset>
             <legend>Vendedor</legend>
 
-            <select name="vendedor" id="">
+            <select name="vendedorId" id="">
                 <option value="">--Seleccione--</option>
                 <?php while($vendedor = mysqli_fetch_assoc($respuesta)) : ?>
                     <option 
