@@ -23,3 +23,9 @@ function debugear($variable){
     echo "</pre>";
     exit;
 }
+
+//Escapa / Sanitizar el HTML
+function sanitizar($html) : string{
+    $s = htmlspecialchars($html);
+    return $s;
+}

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use GuzzleHttp\Psr7\Query;
+
 class Propiedad{
 
     //Base de Datos
@@ -33,7 +35,7 @@ class Propiedad{
         $this->wc = $args['wc'] ?? '';
         $this->estacionamiento = $args['estacionamiento'] ?? '';
         $this->creado = date('Y/m/d');
-        $this->vendedorId = $args['vendedorId'] ?? '';
+        $this->vendedorId = $args['vendedorId'] ?? 1;
     }
 
     //Definir la conexión a la base de datos--------------------------------------
@@ -123,4 +125,41 @@ class Propiedad{
 
         return self::$errores;
     }
+
+    //Listar todas las propiedades
+    public static function all(){
+        $query = "SELECT * FROM propiedades";
+        $resultado = self::consultarSQL($query);
+        return $resultado;
+    }
+
+    public static function consultarSQL($query){
+        
+        //Consultar la BD
+        $resultado = self::$db->query($query);
+
+        //Iterar los resulyados
+        $array = [];
+        while($registro = $resultado->fetch_assoc()){
+            $array[] = self::crearObjeto($registro);
+        }
+
+        //Liberar memoria
+        $resultado->free();
+
+        //Retornar resultados
+        return $array;
+    }
+
+    protected static function crearObjeto($registro){
+        $objeto = new self;
+
+        foreach($registro as $key => $value){
+            if(property_exists( $objeto, $key )){
+                $objeto->$key = $value;
+            }
+        }
+
+        return $objeto;
+    } 
 }
