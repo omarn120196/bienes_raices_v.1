@@ -22,14 +22,14 @@
     //Ejecutar el codigo despues de que el usuario envia el formulario
     if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-        $propiedad = new Propiedad($_POST);
+        $propiedad = new Propiedad($_POST['propiedad']);
 
         //Generar un nombre unico
         $nombreImagen = md5(uniqid(rand(), true)) . '.jpg';
 
-        if($_FILES['imagen']['tmp_name']){
+        if($_FILES['propiedad']['tmp_name']['imagen']){
             //Realizar un resize a la imagen
-            $image = Image::make($_FILES['imagen']['tmp_name'])->fit(800, 600);
+            $image = Image::make($_FILES['propiedad']['tmp_name']['imagen'])->fit(800, 600);
             $propiedad->setImagen($nombreImagen);
         }
 

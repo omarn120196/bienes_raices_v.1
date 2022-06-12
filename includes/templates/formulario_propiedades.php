@@ -5,7 +5,7 @@
             <input 
                 type="text" 
                 id="titulo" 
-                name="titulo" 
+                name="propiedad[titulo]" 
                 placeholder="Titulo propiedad" 
                 value="<?php echo sanitizar($propiedad->titulo); ?>">
 
@@ -13,19 +13,23 @@
             <input 
                 type="number" 
                 id="precio" 
-                name="precio" 
+                name="propiedad[precio]" 
                 placeholder="Precio propiedad" 
                 value="<?php echo sanitizar($propiedad->precio); ?>">
 
             <label for="imagen">IMAGEN</label>
             <input 
                 type="file" 
-                name="imagen" 
+                name="propiedad[imagen]" 
                 accept="image/jpeg, image/png" 
                 id="imagen">
 
+                <?php if($propiedad->imagen) : ?>
+                    <img src="/imagenes/<?php echo $propiedad->imagen ?>" class="imagen-small" alt="">
+                <?php endif; ?>
+
             <label for="descripcion">DESCRIPCION</label>
-            <textarea name="descripcion" id="descripcion"><?php echo sanitizar($propiedad->descripcion); ?></textarea>
+            <textarea name="propiedad[descripcion]" id="descripcion"><?php echo sanitizar($propiedad->descripcion); ?></textarea>
         </fieldset>
 
         <fieldset>
@@ -35,7 +39,7 @@
             <input 
                 type="number" 
                 id="habitaciones" 
-                name="habitaciones" 
+                name="propiedad[habitaciones]" 
                 min="1" 
                 max="9" 
                 placeholder="Ej. 3" 
@@ -47,7 +51,7 @@
                 id="wc" 
                 min="1" 
                 max="9" 
-                name="wc" 
+                name="propiedad[wc]" 
                 placeholder="Ej. 3" 
                 value="<?php echo sanitizar($propiedad->wc); ?>">
 
@@ -58,7 +62,7 @@
                 min="1" 
                 max="9" 
                 placeholder="Ej. 3" 
-                name="estacionamiento" 
+                name="propiedad[estacionamiento]" 
                 value="<?php echo sanitizar($propiedad->estacionamiento); ?>">
         </fieldset>
 
