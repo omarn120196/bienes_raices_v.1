@@ -48,13 +48,7 @@
             $image->save(CARPETA_IMAGENES . $nombreImagen);
             
             // Guardar en la base de datos
-            $resultado = $propiedad->guardar();
-
-            if($resultado){
-                
-                //Redireccionar al usuario
-                header('Location: /admin?resultado=1');
-            }
+            $propiedad->guardar();
         }
 
         
